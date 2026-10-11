@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>حفظ الإنجليزي</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f7fb;--card:#fff;--tx:#1d2433;--mu:#6b7488;--pr:#3b5bdb;--ok:#2f9e44;--okbg:#d3f9d8;--no:#e03131;--nobg:#ffe3e3;--bd:#dfe3ee}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151c;--card:#1c212c;--tx:#eef1f7;--mu:#98a1b5;--pr:#748ffc;--ok:#69db7c;--okbg:#18391f;--no:#ff8787;--nobg:#401a1a;--bd:#2c3446}}
+:root[data-theme="dark"]{--bg:#12151c;--card:#1c212c;--tx:#eef1f7;--mu:#98a1b5;--pr:#748ffc;--ok:#69db7c;--okbg:#18391f;--no:#ff8787;--nobg:#401a1a;--bd:#2c3446}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;min-height:100vh}
+.wrap{max-width:560px;margin:0 auto;padding:12px}
+h1{font-size:19px;margin:4px 0 10px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.tab,.mode{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:20px;padding:8px 14px;font-size:14px;white-space:nowrap;cursor:pointer}
+.tab.on,.mode.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.modes{display:flex;gap:8px;margin:8px 0}.mode{flex:1;text-align:center;border-radius:12px}
+.card{background:var(--card);border:2px solid var(--bd);border-radius:16px;padding:18px;margin-top:8px;transition:.2s}
+.card.ok{border-color:var(--ok);background:var(--okbg)}.card.no{border-color:var(--no);background:var(--nobg)}
+.big{font-size:28px;font-weight:700;text-align:center;direction:ltr;margin:10px 0;word-break:break-word}
+.ar{font-size:22px;text-align:center;margin:8px 0}
+.mu{color:var(--mu);font-size:13px;text-align:center}
+input[type=text]{width:100%;font-size:20px;padding:12px;border-radius:12px;border:2px solid var(--bd);background:var(--bg);color:var(--tx);direction:ltr;text-align:left;margin-top:10px}
+.row{display:flex;gap:8px;margin-top:10px}
+button.b{flex:1;border:0;border-radius:12px;padding:13px;font-size:16px;cursor:pointer;background:var(--pr);color:#fff}
+button.b.g{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+button.b:disabled{opacity:.4}
+.hint{direction:ltr;text-align:center;color:var(--pr);font-size:18px;min-height:24px;margin-top:8px}
+.prog{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin:10px 0 2px}.prog i{display:block;height:100%;background:var(--ok)}
+.kb{direction:ltr;margin-top:12px}.kr{display:flex;gap:4px;margin-bottom:5px;justify-content:center}.k{flex:1;max-width:46px;min-height:46px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:19px;cursor:pointer;padding:0}.k.w{max-width:none;flex:4}.k:active{background:var(--pr);color:#fff}
+details{margin-top:14px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px}
+summary{cursor:pointer;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>📚 حفظ الإنجليزي</h1>
+<div class="tabs" id="tabs"></div>
+<div class="modes"><button class="mode" id="mw">كلمات</button><button class="mode" id="ms">جمل</button></div>
+<select id="unit" class="mode" style="width:100%;margin:0 0 8px;display:none"></select>
+<div class="mu" id="stat"></div>
+<div class="mu" id="snd" style="color:var(--no)"></div>
+<div class="prog"><i id="bar" style="width:0"></i></div>
+<div class="card" id="card"></div>
+<details><summary>➕ إضافة كلمة أو جملة للصف ده</summary>
+<input type="text" id="aEn" placeholder="English" dir="ltr">
+<input type="text" id="aAr" placeholder="المعنى بالعربي" dir="rtl" style="direction:rtl;text-align:right">
+<div class="row"><button class="b" id="aBtn">إضافة</button></div>
+<div class="mu" id="aMsg"></div></details>
+<details><summary>ملاحظة</summary><div class="mu" style="text-align:right">الكلمات الموجودة نماذج مبدئية. ضيف كلمات وجمل كتابك بنفسك، أو ابعتهالي وأحطها لك جاهزة لكل وحدة.</div></details>
+</div>
+<script>
+const G={g7:"1 إعدادي",g8:"2 إعدادي",g9:"3 إعدادي",g10:"1 ثانوي",g11:"2 ثانوي",g12:"3 ثانوي"};
+const D={
+g7:{w:[["tablet","تابلت","1"],["e-books","كتب إلكترونية","1"],["digital","رقمي","1"],["phone","تليفون","1"],["online","على الإنترنت","1"],["messages","رسائل","1"],["smartboard","سبورة ذكية","1"],["screen","شاشة","1"],["website","موقع إلكتروني","1"],["camera","كاميرا","1"],["laptop","لاب توب","1"],["keyboard","لوحة المفاتيح","1"],["printer","طابعة","1"],["speaker","مكبر صوت","1"],["microphone","ميكروفون","1"],["headphones","سماعات رأس","1"],["webcam","كاميرا ويب","1"],["cheerful","مبتهج","1"],["curious","فضولي","1"],["collaborate","يتعاون","1"],["challenge","تحدي","1"],["improve","يحسّن","2"],["ideas","أفكار","2"],["practice","يتدرب","2"],["try","يحاول","2"],["visual","بصري","2"],["auditory","سمعي","2"],["kinesthetic","حركي","2"],["mistakes","أخطاء","2"],["mind map","خريطة ذهنية","2"],["organize","ينظّم","2"],["hero","بطل","3"],["inspire","يُلهم","3"],["courageous","شجاع","3"],["kind","لطيف","3"],["determined","مصمم","3"],["passionate","شغوف","3"],["achievement","إنجاز","3"],["community","مجتمع","3"],["role model","قدوة","3"],["admire","يُعجب بـ","3"],["leader","قائد","3"],["dedication","تفاني","3"],["overcome","يتغلب على","3"],["challenges","تحديات","3"],["biography","سيرة ذاتية","3"],["decision","قرار","4"],["consequence","عاقبة","4"],["option","اختيار","4"],["evaluate","يقيّم","4"],["positive","إيجابي","4"],["negative","سلبي","4"],["responsible","مسؤول","4"],["irresponsible","غير مسؤول","4"],["impact","تأثير","4"],["dilemma","مأزق","4"],["dream","حلم","5"],["plan","خطة","5"],["career","مهنة","5"],["succeed","ينجح","5"],["interview","مقابلة","5"],["path","طريق","5"],["ambition","طموح","5"],["skill","مهارة","5"],["talent","موهبة","5"],["opportunity","فرصة","5"],["success","نجاح","5"]],s:[["I use my tablet every day","أستخدم التابلت بتاعي كل يوم","1"],["The smartboard helps us learn well","السبورة الذكية بتساعدنا نتعلم كويس","1"],["My brother is curious about digital devices","أخويا فضولي بخصوص الأجهزة الرقمية","1"],["Visual learners use mind maps","المتعلمين البصريين بيستخدموا الخرايط الذهنية","2"],["Practice helps me improve my English","التدريب بيساعدني أحسّن إنجليزيتي","2"],["Mistakes help us learn","الأخطاء بتساعدنا نتعلم","2"],["She was a courageous hero","كانت بطلة شجاعة","3"],["He is determined to overcome every challenge","هو مصمم يتغلب على كل تحدي","3"],["Heroes inspire the community","الأبطال بيُلهموا المجتمع","3"],["You should think about every consequence","لازم تفكر في كل عاقبة","4"],["You should evaluate each option carefully","لازم تقيّم كل اختيار بعناية","4"],["A responsible student makes a good decision","الطالب المسؤول بياخد قرار كويس","4"],["My dream is to have a successful career","حلمي إني يبقى عندي مهنة ناجحة","5"],["She has a lot of talent and ambition","عندها موهبة وطموح كتير","5"],["I have an interview for a job next week","عندي مقابلة شغل الأسبوع الجاي","5"]]},
+g8:{w:[["weather","طقس"],["journey","رحلة"],["museum","متحف"],["borrow","يستعير"],["exercise","تمرين"],["airport","مطار"],["ticket","تذكرة"],["delicious","لذيذ"],["dangerous","خطير"],["popular","مشهور"],["climate","مناخ"],["festival","مهرجان"],["ancient","أثري"],["crowded","مزدحم"],["repair","يصلح"]],s:[["We visited the museum yesterday","زرنا المتحف امبارح"],["Exercise keeps you healthy","التمرين بيخليك صحتك كويسة"]]},
+g9:{w:[["environment","بيئة"],["pollution","تلوث"],["invention","اختراع"],["achieve","يحقق"],["volunteer","متطوع"],["technology","تكنولوجيا"],["scientist","عالم"],["discover","يكتشف"],["energy","طاقة"],["recycle","يعيد التدوير"],["protect","يحمي"],["community","مجتمع محلي"],["damage","ضرر"],["solution","حل"],["global","عالمي"]],s:[["Pollution is harming our environment","التلوث بيضر بيئتنا"],["She wants to achieve her dream","هي عايزة تحقق حلمها"]]},
+g10:{w:[["opportunity","فرصة"],["knowledge","معرفة"],["develop","يطوّر"],["responsible","مسؤول"],["society","مجتمع"],["communication","تواصل"],["advantage","ميزة"],["disadvantage","عيب"],["expensive","غالي"],["suggest","يقترح"],["increase","يزيد"],["reduce","يقلل"],["require","يتطلب"],["avoid","يتجنب"],["experience","خبرة"]],s:[["Education gives us new opportunities","التعليم بيدينا فرص جديدة"],["Everyone is responsible for society","كل واحد مسؤول عن المجتمع"]]},
+g11:{w:[["influence","تأثير"],["efficient","كفء"],["resource","مورد"],["challenge","تحدي"],["sustainable","مستدام"],["economy","اقتصاد"],["generation","جيل"],["essential","ضروري"],["benefit","فائدة"],["contribute","يساهم"],["available","متاح"],["evidence","دليل"],["struggle","يكافح"],["equality","مساواة"],["awareness","وعي"]],s:[["Technology has a strong influence on life","التكنولوجيا ليها تأثير قوي على الحياة"],["We must use resources wisely","لازم نستخدم الموارد بحكمة"]]},
+g12:{w:[["significant","مهم جدا"],["whereas","بينما"],["consequence","نتيجة"],["perspective","وجهة نظر"],["eventually","في النهاية"],["furthermore","علاوة على ذلك"],["nevertheless","مع ذلك"],["impact","أثر"],["concept","مفهوم"],["claim","يدّعي"],["reliable","موثوق"],["analyze","يحلل"],["outcome","حصيلة"],["sufficient","كافٍ"],["issue","قضية"]],s:[["Every action has a consequence","كل فعل له نتيجة"],["He worked hard and eventually succeeded","اشتغل بجد ونجح في النهاية"]]}
+};
+let S={g:"g7",m:"w",u:"",q:[],i:0,ph:"study",helps:0,clean:true,done:false};
+function ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+let custom=ld("wl_c",{}),prog=ld("wl_p",{});
+const $=id=>document.getElementById(id);
+function items(){const c=(custom[S.g]||{})[S.m]||[];return D[S.g][S.m].concat(c).filter(x=>!x[2]||!S.u||x[2]===S.u)}
+function pk(){return S.g+S.m}
+function norm(t){return t.toLowerCase().replace(/[.,!?;:"']/g,"").replace(/\s+/g," ").trim()}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function start(){const p=prog[pk()]||{};const all=items();const todo=all.filter(x=>!p[x[0]]);S.q=shuffle(todo.length?todo:all);S.i=0;S.ph="study";S.helps=0;S.clean=true;S.done=false;render()}
+function speak(t,man){const m=$("snd");try{const s=window.speechSynthesis;if(!s){if(man)m.textContent="⚠️ الصوت مش مدعوم هنا. افتح الرابط في متصفح Chrome.";return}const vs=s.getVoices();const v=vs.find(x=>/^en[-_]US/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang));if(man&&!v)m.textContent="⚠️ مفيش صوت إنجليزي على الجهاز. ثبّت Speech Services by Google وافتح الرابط في Chrome.";const u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=.9;if(v)u.voice=v;u.onstart=()=>{m.textContent=""};u.onerror=()=>{if(man)m.textContent="⚠️ الصوت مش شغال: افتح الرابط في Chrome وتأكد من Speech Services by Google."};s.cancel();setTimeout(()=>s.speak(u),60)}catch(e){}}
+function kb(inp){const w=el("div","kb");const rows=[["q","w","e","r","t","y","u","i","o","p"],["a","s","d","f","g","h","j","k","l"],["z","x","c","v","b","n","m"],["'","-",".",",","?","space","⌫"]];
+ for(const r of rows){const d=el("div","kr");for(const k of r){const b=el("button","k"+(k==="space"?" w":""),k==="space"?"␣":k);b.type="button";b.onmousedown=e=>e.preventDefault();b.onclick=()=>{if(k==="⌫")inp.value=inp.value.slice(0,-1);else inp.value+=(k==="space"?" ":k)};d.appendChild(b)}w.appendChild(d)}return w}
+function tabs(){const t=$("tabs");t.innerHTML="";for(const k in G){const b=document.createElement("button");b.className="tab"+(k===S.g?" on":"");b.textContent=G[k];b.onclick=()=>{S.g=k;S.u="";start();tabs()};t.appendChild(b)}
+{const us=[...new Set(D[S.g].w.concat(D[S.g].s).map(x=>x[2]).filter(Boolean))];const se=$("unit");se.innerHTML="";se.style.display=us.length?"block":"none";const o0=el("option","","كل الوحدات");o0.value="";se.appendChild(o0);us.forEach(u=>{const o=el("option","","الوحدة "+u);o.value=u;se.appendChild(o)});se.value=S.u}
+$("mw").className="mode"+(S.m==="w"?" on":"");$("ms").className="mode"+(S.m==="s"?" on":"")}
+function stat(){const all=items();const p=prog[pk()]||{};const n=all.filter(x=>p[x[0]]).length;$("stat").textContent="متقن: "+n+" من "+all.length;$("bar").style.width=(all.length?n/all.length*100:0)+"%"}
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e}
+function render(){
+stat();const c=$("card");c.className="card";c.innerHTML="";
+if(S.done){c.appendChild(el("div","ar","🎉 خلصت الدفعة دي!"));const b=el("button","b","ابدأ تاني");b.onclick=start;c.appendChild(b);return}
+const it=S.q[S.i];if(!it){c.appendChild(el("div","ar","مفيش عناصر هنا. ضيف من تحت."));return}
+c.appendChild(el("div","mu",(S.i+1)+" / "+S.q.length));
+if(S.ph==="study"){
+ c.appendChild(el("div","big",it[0]));c.appendChild(el("div","ar",it[1]));
+ const r=el("div","row");const sp=el("button","b g","🔊 نطق");sp.onclick=()=>speak(it[0],true);
+ const go=el("button","b","اخفي واكتب ✍️");go.onclick=()=>{S.ph="type";S.helps=0;render()};r.append(sp,go);c.appendChild(r);
+ if(S.m==="w"||true)setTimeout(()=>speak(it[0]),150);
+}else{
+ c.appendChild(el("div","mu","اكتب بالإنجليزي"));c.appendChild(el("div","ar",it[1]));
+ const inp=el("input");inp.type="text";inp.id="inp";inp.autocomplete="off";inp.autocapitalize="off";inp.spellcheck=false;inp.setAttribute("autocorrect","off");inp.setAttribute("data-gramm","false");inp.name="a"+Date.now();inp.setAttribute("dir","ltr");inp.readOnly=true;inp.setAttribute("inputmode","none");c.appendChild(inp);
+ const h=el("div","hint");h.id="hint";c.appendChild(h);
+ const r=el("div","row");const hb=el("button","b g","💡 مساعدة ("+(2-S.helps)+")");hb.disabled=S.helps>=2;
+ const ck=el("button","b","تأكيد ✔");r.append(hb,ck);c.appendChild(r);
+ hb.onclick=()=>{if(S.helps>=2)return;S.helps++;S.clean=false;help(it);hb.textContent="💡 مساعدة ("+(2-S.helps)+")";hb.disabled=S.helps>=2};
+ ck.onclick=()=>check(it);c.appendChild(kb(inp));
+}}
+function help(it){const inp=$("inp");const a=it[0];
+ if(S.m==="w"){const cur=inp.value;let p=0;while(p<cur.length&&p<a.length&&cur[p].toLowerCase()===a[p].toLowerCase())p++;inp.value=a.slice(0,Math.min(p+1,a.length))}
+ else{const aw=a.split(" ");const tw=inp.value.trim().split(/\s+/).filter(Boolean);let k=0;while(k<tw.length&&k<aw.length&&norm(tw[k])===norm(aw[k]))k++;
+  $("hint").textContent=k<aw.length?"الكلمة اللي بعد كده تبدأ بـ: "+aw[k][0]:"الجملة كاملة!"}
+ inp.focus()}
+function check(it){const inp=$("inp");if(!inp.value.trim())return;const c=$("card");
+ if(norm(inp.value)===norm(it[0])){c.className="card ok";
+  const p=prog[pk()]||{};if(S.clean&&S.firstTry!==false){p[it[0]]=1;prog[pk()]=p;sv("wl_p",prog)}
+  stat();setTimeout(()=>{S.i++;S.firstTry=true;S.clean=true;S.helps=0;S.ph="study";if(S.i>=S.q.length)S.done=true;render()},700)}
+ else{c.className="card no";S.clean=false;S.firstTry=false;setTimeout(()=>{S.ph="study";render()},900)}}
+$("unit").onchange=e=>{S.u=e.target.value;start()};
+$("mw").onclick=()=>{S.m="w";tabs();start()};$("ms").onclick=()=>{S.m="s";tabs();start()};
+$("aBtn").onclick=()=>{const e=$("aEn").value.trim(),a=$("aAr").value.trim();if(!e||!a){$("aMsg").textContent="اكتب الاتنين";return}
+ custom[S.g]=custom[S.g]||{};custom[S.g][S.m]=custom[S.g][S.m]||[];custom[S.g][S.m].push([e,a]);sv("wl_c",custom);
+ $("aEn").value="";$("aAr").value="";$("aMsg").textContent="اتضافت ✅";start()};
+try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{}}catch(e){}
+document.addEventListener("keydown",e=>{if(S.ph!=="type"||S.done)return;const t=e.target.tagName;if(t==="INPUT"&&e.target.id!=="inp"||t==="BUTTON"||e.ctrlKey||e.metaKey)return;const i=$("inp");if(!i)return;if(e.key==="Backspace"){i.value=i.value.slice(0,-1);e.preventDefault()}else if(e.key==="Enter"){check(S.q[S.i])}else if(e.key.length===1){i.value+=e.key;e.preventDefault()}});
+S.firstTry=true;tabs();start();
+</script>
+</body>
+</html>
